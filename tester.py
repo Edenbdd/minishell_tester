@@ -20,6 +20,19 @@ def execute_commands(process, commands):
 
     return final_stdout, final_stderr
 
+def checkLeak():
+	f = open("./log", "r")
+	log = f.read()
+	leak = 0
+	leaksStr = ["definitely lost", "indirectly lost",
+        	"possibly lost", "still reachable", "suppressed"]
+	for str in leaksStr:
+		i = log.find(str) + len(str) + 2
+		if log[i:][0] != '0':
+			leak = 1
+			print(str + ": CA LEAK GROSSE PUTE")
+	if leak == 0:
+		print("CA LEAK PAS")
 
 # Fonction testing pour plusieurs commandes successives
 def testing(commands):
@@ -27,14 +40,14 @@ def testing(commands):
     commands = commands.strip().split("\n")
 
     # Lancer bash
-    procbash = subprocess.Popen(["bash"],
+    procbash = subprocess.Popen(["valgrind", "--log-file=log", "bash"],
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
                                  text=True)
 
     # Lancer minishell
-    procmini = subprocess.Popen(["bash"], #remplace par ./minishell
+    procmini = subprocess.Popen(["valgrind", "--log-file=log", "bash"], #remplace par ./minishell
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
@@ -69,13 +82,13 @@ def testing(commands):
         print(f"stderr : {errm}")
 
     # Fermer explicitement les processus après utilisation
+    checkLeak()
     procbash.stdin.close()
     procbash.stdout.close()
     procbash.stderr.close()
     procmini.stdin.close()
     procmini.stdout.close()
     procmini.stderr.close()
-
 
 # Lire les commandes depuis un fichier CSV
 def read_commands_from_csv(filename):
