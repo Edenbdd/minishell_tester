@@ -1,5 +1,7 @@
 import subprocess
 import csv
+import os
+import shutil
 
 # Fonction pour exécuter plusieurs commandes successivement
 def execute_commands(process, commands):
@@ -140,7 +142,28 @@ def run_tests_from_csv(filename):
         print(f"Commandes :\n{command}")
         testing(command)
 
+def supprimer_fichiers_et_dossiers():
+    # Liste des fichiers à supprimer (remplace ces noms par les tiens)
+    fichiers_a_supprimer = ['a', 'b', 'c', 'd', 'e', 'bonjour', 'bonjour hello', 'hey', 'hola'
+                            , 'hola1', 'hola2', 'HOLA', 'ls1', 'pwd']
+    dossiers_a_supprimer = ['dir',]
+
+    # Suppression des fichiers
+    for fichier in fichiers_a_supprimer:
+        if os.path.exists(fichier):
+            os.remove(fichier)
+            print(f"Le fichier {fichier} a été supprimé.")
+
+    # Suppression des dossiers
+    for dossier in dossiers_a_supprimer:
+        if os.path.exists(dossier):
+            shutil.rmtree(dossier)
+            print(f"Le dossier {dossier} a été supprimé.")
+
 
 # Exemple d'appel avec un fichier "commands.csv"
 run_tests_from_csv("commands.csv")
+    
+# Appel pour supprimer les fichiers et dossiers à la fin
+supprimer_fichiers_et_dossiers()
 
